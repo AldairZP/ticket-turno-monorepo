@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Ticket de Turno - Institutional Services</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-fixed": "#360f00",
+                        "surface": "#f8f9fa",
+                        "on-tertiary-fixed-variant": "#7d2d00",
+                        "on-surface-variant": "#434655",
+                        "on-secondary-container": "#394c84",
+                        "surface-container-high": "#e7e8e9",
+                        "error-container": "#ffdad6",
+                        "on-surface": "#191c1d",
+                        "on-background": "#191c1d",
+                        "primary-fixed": "#dbe1ff",
+                        "surface-container-lowest": "#ffffff",
+                        "background": "#f8f9fa",
+                        "on-secondary-fixed": "#00174b",
+                        "inverse-surface": "#2e3132",
+                        "tertiary": "#943700",
+                        "surface-variant": "#e1e3e4",
+                        "on-primary-fixed-variant": "#003ea8",
+                        "tertiary-container": "#bc4800",
+                        "secondary-fixed-dim": "#b4c5ff",
+                        "surface-container-low": "#f3f4f5",
+                        "on-primary-container": "#eeefff",
+                        "inverse-on-surface": "#f0f1f2",
+                        "outline": "#737686",
+                        "surface-dim": "#d9dadb",
+                        "tertiary-fixed": "#ffdbcd",
+                        "primary": "#004ac6",
+                        "surface-container": "#edeeef",
+                        "on-tertiary-container": "#ffede6",
+                        "surface-tint": "#0053db",
+                        "on-tertiary": "#ffffff",
+                        "secondary-fixed": "#dbe1ff",
+                        "on-secondary-fixed-variant": "#31447b",
+                        "surface-bright": "#f8f9fa",
+                        "primary-container": "#2563eb",
+                        "on-error-container": "#93000a",
+                        "on-error": "#ffffff",
+                        "secondary-container": "#acbfff",
+                        "on-secondary": "#ffffff",
+                        "on-primary-fixed": "#00174b",
+                        "surface-container-highest": "#e1e3e4",
+                        "error": "#ba1a1a",
+                        "secondary": "#495c95",
+                        "inverse-primary": "#b4c5ff",
+                        "tertiary-fixed-dim": "#ffb596",
+                        "on-primary": "#ffffff",
+                        "outline-variant": "#c3c6d7",
+                        "primary-fixed-dim": "#b4c5ff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Inter"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .signature-texture {
+            background: linear-gradient(135deg, #004ac6 0%, #2563eb 100%);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface min-h-screen flex flex-col items-center">
+<!-- TopAppBar -->
+<header class="bg-[#f8f9fa] dark:bg-slate-900 flex justify-between items-center w-full px-6 py-4 max-w-7xl mx-auto sticky top-0 z-50">
+<div class="flex items-center gap-4">
+<span class="text-[#004ac6] dark:text-blue-400 font-bold text-xl tracking-tighter">SE</span>
+</div>
+<h1 class="font-['Inter'] font-bold text-2xl tracking-tight text-[#004ac6] dark:text-blue-400">Ticket de Turno</h1>
+<div class="flex items-center">
+<div class="w-10 h-10 rounded-full bg-primary-container text-white flex items-center justify-center font-bold text-lg">
+                4
+            </div>
+</div>
+</header>
+<!-- Main Content Container -->
+<main class="w-full max-w-[768px] px-4 py-8 md:py-12 flex-grow">
+<!-- Instructional Header -->
+<div class="mb-12">
+<p class="text-on-surface-variant body-lg mb-2">Paso final</p>
+<h2 class="text-on-surface headline-lg font-bold">Registro de Solicitante</h2>
+<div class="h-1 w-24 bg-primary mt-4 rounded-full"></div>
+</div>
+<form class="space-y-12">
+<!-- Group 1: Identidad del Ciudadano -->
+<section class="space-y-8">
+<div class="flex items-center gap-3">
+<span aria-hidden="true" class="material-symbols-outlined text-primary">fingerprint</span>
+<h3 class="title-md font-medium text-on-surface">Identidad del Ciudadano</h3>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="md:col-span-3 group">
+<label class="block label-md text-on-surface-variant mb-2 transition-colors group-focus-within:text-primary" for="tramite_nombre">Nombre completo de quien realizará el trámite</label>
+<input class="w-full bg-surface-container-highest border-0 border-b-2 border-transparent focus:border-primary focus:ring-0 text-[16px] py-4 px-4 transition-all" id="tramite_nombre" placeholder="Como aparece en su identificación" required="" type="text"/>
+</div>
+</div>
+</section>
+<!-- Group 2: Datos del Alumno -->
+<section class="space-y-8">
+<div class="flex items-center gap-3">
+<span aria-hidden="true" class="material-symbols-outlined text-primary">person</span>
+<h3 class="title-md font-medium text-on-surface">Datos del Alumno</h3>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="group">
+<label class="block label-md text-on-surface-variant mb-2 transition-colors group-focus-within:text-primary" for="student_name">Nombre</label>
+<input class="w-full bg-surface-container-highest border-0 border-b-2 border-transparent focus:border-primary focus:ring-0 text-[16px] py-4 px-4 transition-all" id="student_name" placeholder="Nombre(s)" required="" type="text"/>
+</div>
+<div class="group">
+<label class="block label-md text-on-surface-variant mb-2 transition-colors group-focus-within:text-primary" for="last_name_p">Apellido Paterno</label>
+<input class="w-full bg-surface-container-highest border-0 border-b-2 border-transparent focus:border-primary focus:ring-0 text-[16px] py-4 px-4 transition-all" id="last_name_p" placeholder="Primer apellido" required="" type="text"/>
+</div>
+<div class="group">
+<label class="block label-md text-on-surface-variant mb-2 transition-colors group-focus-within:text-primary" for="last_name_m">Apellido Materno</label>
+<input class="w-full bg-surface-container-highest border-0 border-b-2 border-transparent focus:border-primary focus:ring-0 text-[16px] py-4 px-4 transition-all" id="last_name_m" placeholder="Segundo apellido" required="" type="text"/>
+</div>
+<div class="group md:col-span-3">
+<label class="block label-md text-on-surface-variant mb-2 transition-colors group-focus-within:text-primary" for="curp_alumno">CURP del Alumno</label>
+<input class="w-full bg-surface-container-highest border-0 border-b-2 border-transparent focus:border-primary focus:ring-0 text-[16px] py-4 px-4 transition-all uppercase" id="curp_alumno" placeholder="18 caracteres" required="" type="text"/>
+</div></div>
+</section>
+<!-- Group 3: Información de Contacto -->
+<section class="space-y-8 bg-surface-container-low p-6 md:p-8 rounded-xl">
+<div class="flex items-center gap-3">
+<span aria-hidden="true" class="material-symbols-outlined text-primary">contact_mail</span>
+<h3 class="title-md font-medium text-on-surface">Información de Contacto</h3>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="group">
+<label class="block label-md text-on-surface-variant mb-2 transition-colors group-focus-within:text-primary" for="phone">Teléfono</label>
+<input class="w-full bg-surface-container-highest border-0 border-b-2 border-transparent focus:border-primary focus:ring-0 text-[16px] py-4 px-4 transition-all" id="phone" placeholder="(000) 000-0000" type="tel"/>
+</div>
+<div class="group">
+<label class="block label-md text-on-surface-variant mb-2 transition-colors group-focus-within:text-primary" for="cell">Celular</label>
+<input class="w-full bg-surface-container-highest border-0 border-b-2 border-transparent focus:border-primary focus:ring-0 text-[16px] py-4 px-4 transition-all" id="cell" placeholder="(000) 000-0000" required="" type="tel"/>
+</div>
+<div class="md:col-span-2 group">
+<label class="block label-md text-on-surface-variant mb-2 transition-colors group-focus-within:text-primary" for="email">Correo</label>
+<input class="w-full bg-surface-container-highest border-0 border-b-2 border-transparent focus:border-primary focus:ring-0 text-[16px] py-4 px-4 transition-all" id="email" placeholder="usuario@ejemplo.com" required="" type="email"/>
+</div>
+</div>
+</section>
+<!-- Group 4: Detalles del Trámite -->
+<section class="space-y-8">
+<div class="flex items-center gap-3">
+<span aria-hidden="true" class="material-symbols-outlined text-primary">school</span>
+<h3 class="title-md font-medium text-on-surface">Detalles del Trámite</h3>
+</div>
+<div class="grid grid-cols-1 gap-6">
+<div class="group">
+<label class="block label-md text-on-surface-variant mb-2 transition-colors group-focus-within:text-primary" for="level">¿Nivel al que desea ingresar o que ya cursa el alumno?</label>
+<select class="w-full bg-surface-container-highest border-0 border-b-2 border-transparent focus:border-primary focus:ring-0 text-[16px] py-4 px-4 transition-all appearance-none" id="level">
+<option disabled="" selected="" value="">Seleccione nivel</option>
+<option value="primaria">Primaria</option>
+<option value="secundaria">Secundaria</option>
+<option value="preparatoria">Preparatoria</option>
+<option value="superior">Superior</option>
+</select>
+</div>
+<div class="group">
+<label class="block label-md text-on-surface-variant mb-2 transition-colors group-focus-within:text-primary" for="municipality">Municipio donde desea estudie el alumno</label>
+<select class="w-full bg-surface-container-highest border-0 border-b-2 border-transparent focus:border-primary focus:ring-0 text-[16px] py-4 px-4 transition-all appearance-none" id="municipality">
+<option disabled="" selected="" value="">Seleccione municipio</option>
+<option value="m1">Centro</option>
+<option value="m2">Norte</option>
+<option value="m3">Sur</option>
+</select>
+</div>
+<div class="group">
+<label class="block label-md text-on-surface-variant mb-2 transition-colors group-focus-within:text-primary" for="subject">Seleccione el asunto que va a tratar</label>
+<select class="w-full bg-surface-container-highest border-0 border-b-2 border-transparent focus:border-primary focus:ring-0 text-[16px] py-4 px-4 transition-all appearance-none" id="subject">
+<option disabled="" selected="" value="">Seleccione el motivo de su visita</option>
+<option value="s1">Inscripción</option>
+<option value="s2">Beca</option>
+<option value="s3">Certificación</option>
+<option value="s4">Otros</option>
+</select>
+</div>
+</div>
+</section>
+<!-- Action Area -->
+<div class="pt-8 flex flex-col gap-4">
+<button class="signature-texture w-full py-5 rounded-xl text-white font-bold text-lg shadow-xl hover:opacity-90 transition-all flex items-center justify-center gap-2" type="submit">
+                    Generar Turno
+                    <span class="material-symbols-outlined" data-icon="confirmation_number">confirmation_number</span>
+</button>
+<p class="text-center label-md text-on-surface-variant">
+                    Al generar su turno, acepta el tratamiento de sus datos personales conforme a nuestra política de privacidad.
+                </p>
+</div>
+</form>
+<!-- Signature Card Preview (Bento Component) -->
+<div class="mt-20 p-8 rounded-2xl bg-surface-container-lowest border-2 border-dashed border-outline-variant/30 relative overflow-hidden">
+<div class="absolute top-0 right-0 p-4 opacity-10">
+<span class="material-symbols-outlined text-8xl" style="font-variation-settings: 'FILL' 1;">account_balance</span>
+</div>
+<div class="relative z-10">
+<span class="inline-block px-3 py-1 bg-tertiary-container text-on-tertiary-container text-[10px] font-bold uppercase rounded mb-4">Vista Previa</span>
+<div class="flex flex-col gap-8">
+<div>
+<p class="label-md text-on-surface-variant">FOLIO PROVISIONAL</p>
+<p class="text-4xl font-black text-primary tracking-tighter">#----</p>
+</div>
+<div class="flex justify-between items-end border-t border-surface-container-highest pt-6">
+<div>
+<p class="label-md text-on-surface-variant">CIUDADANO</p>
+<p class="body-lg font-medium">Pendiente de registro</p>
+</div>
+<span class="material-symbols-outlined text-outline-variant">qr_code_2</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-[#f8f9fa] dark:bg-slate-900 flex flex-col md:flex-row justify-between items-center w-full px-8 py-6 mt-auto">
+<p class="font-['Inter'] text-sm text-slate-500">© 2024 Institutional Services. All rights reserved.</p>
+<div class="flex gap-6 mt-4 md:mt-0">
+<a class="text-slate-500 hover:text-[#004ac6] font-['Inter'] text-sm transition-colors" href="#">Privacy Policy</a>
+<a class="text-slate-500 hover:text-[#004ac6] font-['Inter'] text-sm transition-colors" href="#">Terms of Service</a>
+<a class="text-slate-500 hover:text-[#004ac6] font-['Inter'] text-sm transition-colors" href="#">Accessibility</a>
+</div>
+</footer>
+</body></html>
