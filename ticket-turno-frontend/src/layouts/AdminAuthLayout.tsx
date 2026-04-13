@@ -28,6 +28,24 @@ export function AdminAuthLayout() {
         </div>
         <nav className="menu" aria-label="Menu administrativo">
           <NavLink
+            to="/admin/tickets/generar"
+            className={({ isActive }) => getMenuLinkClass(isActive)}
+          >
+            Generar
+          </NavLink>
+          <NavLink
+            to="/admin/tickets/consultar"
+            className={({ isActive }) => getMenuLinkClass(isActive)}
+          >
+            Consultar
+          </NavLink>
+          <NavLink
+            to="/admin/tickets/actualizar"
+            className={({ isActive }) => getMenuLinkClass(isActive)}
+          >
+            Actualizar
+          </NavLink>
+          <NavLink
             to="/admin/dashboard"
             className={({ isActive }) => getMenuLinkClass(isActive)}
           >

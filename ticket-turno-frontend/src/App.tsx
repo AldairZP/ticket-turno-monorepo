@@ -33,6 +33,9 @@ function App() {
             }
           >
             <Route index element={<Navigate to="/admin/dashboard" replace />} />
+            <Route path="tickets/generar" element={<GenerateTicketPage />} />
+            <Route path="tickets/consultar" element={<TicketLookupPage />} />
+            <Route path="tickets/actualizar" element={<TicketUpdatePage />} />
             <Route path="dashboard" element={<AdminDashboardPage />} />
             <Route path="catalogos" element={<CatalogCrudPage />} />
           </Route>
