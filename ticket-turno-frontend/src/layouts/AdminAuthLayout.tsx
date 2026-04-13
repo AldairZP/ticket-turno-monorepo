@@ -66,10 +66,6 @@ export function AdminAuthLayout() {
       <main className="layout">
         <Outlet />
       </main>
-
-      <footer className="footer">
-        <p>Acceso privado con JWT y control de sesión activo.</p>
-      </footer>
     </div>
   );
 }

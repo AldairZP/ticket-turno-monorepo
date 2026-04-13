@@ -281,7 +281,7 @@ export function GenerateTicketPage() {
           <SectionHeader
             id="contact-title"
             icon="contact_mail"
-            title="Information de Contacto"
+            title="Información de Contacto"
           />
           <div className="grid grid-2">
             <FormInput
