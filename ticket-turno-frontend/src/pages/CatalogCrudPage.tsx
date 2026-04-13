@@ -115,6 +115,7 @@ export function CatalogCrudPage() {
       setFormValues(INITIAL_FORM_VALUES);
       setEditingId(null);
       await loadItems(catalogKind);
+      window.dispatchEvent(new Event("catalogs:updated"));
     } catch (error) {
       setErrorMessage(extractApiErrorMessage(error));
     } finally {
@@ -138,6 +139,7 @@ export function CatalogCrudPage() {
       await deleteCatalogItem(catalogKind, itemId);
       setSuccessMessage("Registro eliminado correctamente.");
       await loadItems(catalogKind);
+      window.dispatchEvent(new Event("catalogs:updated"));
     } catch (error) {
       setErrorMessage(extractApiErrorMessage(error));
     }

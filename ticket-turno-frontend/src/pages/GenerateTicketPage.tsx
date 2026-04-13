@@ -8,6 +8,15 @@ import {
   MUNICIPALITY_OPTIONS,
   SUBJECT_OPTIONS,
 } from "../constants/ticketOptions";
+import {
+  CURP_FORMAT_HINT,
+  CURP_HTML_PATTERN,
+  EMAIL_FORMAT_HINT,
+  EMAIL_HTML_PATTERN,
+  isValidCurpFormat,
+  isValidEmailFormat,
+} from "../constants/validation";
+import { useCatalogOptions } from "../hooks/useCatalogOptions";
 import { generateTicket } from "../services/publicTicketsApi";
 import { extractApiErrorMessage } from "../services/httpClient";
 import { downloadPdfFromResponse } from "../utils/fileDownload";
@@ -17,8 +26,6 @@ import {
 } from "../utils/date";
 import type { TicketGenerateFormValues } from "../types/forms";
 
-const CURP_PATTERN = /^[A-Z0-9]{18}$/;
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PHONE_PATTERN = /^[0-9+\-\s()]{7,20}$/;
 
 const INITIAL_FORM_VALUES: TicketGenerateFormValues = {
@@ -36,6 +43,19 @@ const INITIAL_FORM_VALUES: TicketGenerateFormValues = {
 };
 
 export function GenerateTicketPage() {
+  const { options: levelOptions } = useCatalogOptions(
+    "niveles-educativos",
+    LEVEL_OPTIONS,
+  );
+  const { options: municipalityOptions } = useCatalogOptions(
+    "municipios",
+    MUNICIPALITY_OPTIONS,
+  );
+  const { options: subjectOptions } = useCatalogOptions(
+    "asuntos",
+    SUBJECT_OPTIONS,
+  );
+
   const [formValues, setFormValues] =
     useState<TicketGenerateFormValues>(INITIAL_FORM_VALUES);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -58,10 +78,8 @@ export function GenerateTicketPage() {
 
     if (!values.curp.trim()) {
       messages.push("La CURP es obligatoria.");
-    } else if (!CURP_PATTERN.test(values.curp.trim())) {
-      messages.push(
-        "La CURP debe contener 18 caracteres alfanumericos en mayusculas.",
-      );
+    } else if (!isValidCurpFormat(values.curp)) {
+      messages.push("La CURP no tiene un formato valido.");
     }
 
     if (!values.telefono.trim()) {
@@ -78,7 +96,7 @@ export function GenerateTicketPage() {
 
     if (!values.correo.trim()) {
       messages.push("El correo es obligatorio.");
-    } else if (!EMAIL_PATTERN.test(values.correo.trim())) {
+    } else if (!isValidEmailFormat(values.correo)) {
       messages.push("El correo no tiene un formato valido.");
     }
 
@@ -249,8 +267,8 @@ export function GenerateTicketPage() {
                 required
                 minLength={18}
                 maxLength={18}
-                pattern="^[A-Z0-9]{18}$"
-                title="La CURP debe contener 18 caracteres en mayusculas."
+                pattern={CURP_HTML_PATTERN}
+                title={CURP_FORMAT_HINT}
               />
             </div>
           </div>
@@ -295,6 +313,8 @@ export function GenerateTicketPage() {
                 value={formValues.correo}
                 onChange={(value) => setField("correo", value)}
                 required
+                pattern={EMAIL_HTML_PATTERN}
+                title={EMAIL_FORMAT_HINT}
                 maxLength={180}
               />
             </div>
@@ -321,7 +341,7 @@ export function GenerateTicketPage() {
               label="Nivel educativo"
               value={formValues.nivelEducativoId}
               onChange={(value) => setField("nivelEducativoId", value)}
-              options={LEVEL_OPTIONS}
+              options={levelOptions}
               placeholder="Seleccione nivel"
               required
             />
@@ -330,7 +350,7 @@ export function GenerateTicketPage() {
               label="Municipio"
               value={formValues.municipioId}
               onChange={(value) => setField("municipioId", value)}
-              options={MUNICIPALITY_OPTIONS}
+              options={municipalityOptions}
               placeholder="Seleccione municipio"
               required
             />
@@ -339,7 +359,7 @@ export function GenerateTicketPage() {
               label="Asunto"
               value={formValues.asuntoId}
               onChange={(value) => setField("asuntoId", value)}
-              options={SUBJECT_OPTIONS}
+              options={subjectOptions}
               placeholder="Seleccione asunto"
               required
             />

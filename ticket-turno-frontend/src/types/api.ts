@@ -52,6 +52,23 @@ export interface TicketResponseDto {
   asunto: string;
 }
 
+export interface AdminTicketDetailDto {
+  ticketId?: number;
+  id?: number;
+  numeroTurno?: number;
+  curp?: string;
+  nombreCompleto?: string;
+  telefono?: string;
+  celular?: string;
+  correo?: string;
+  fechaAtencion?: string;
+  estatus?: TicketStatus;
+  nivelEducativo?: string;
+  municipio?: string;
+  oficinaRegional?: string;
+  asunto?: string;
+}
+
 export interface AdminCaptchaResponseDto {
   captchaToken: string;
   prompt: string;

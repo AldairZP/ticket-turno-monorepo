@@ -1,6 +1,7 @@
 import { getAdminToken } from "./authStorage";
 import { httpClient } from "./httpClient";
 import type {
+  AdminTicketDetailDto,
   AdminCaptchaResponseDto,
   AdminLoginRequestDto,
   AdminLoginResponseDto,
@@ -55,6 +56,17 @@ export async function updateAdminTicketStatus(
   const { data } = await httpClient.patch<MessageErrorResponse>(
     `/api/admin/tickets/${ticketId}/estatus`,
     { estatus },
+    {
+      headers: getAdminHeaders(),
+    },
+  );
+
+  return data;
+}
+
+export async function getAdminTicketDetail(ticketId: number) {
+  const { data } = await httpClient.get<AdminTicketDetailDto>(
+    `/api/admin/tickets/${ticketId}`,
     {
       headers: getAdminHeaders(),
     },

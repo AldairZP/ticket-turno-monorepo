@@ -9,6 +9,14 @@ import {
   findOptionValueByLabel,
 } from "../constants/ticketOptions";
 import {
+  CURP_FORMAT_HINT,
+  CURP_HTML_PATTERN,
+  EMAIL_FORMAT_HINT,
+  EMAIL_HTML_PATTERN,
+  isValidCurpFormat,
+} from "../constants/validation";
+import { useCatalogOptions } from "../hooks/useCatalogOptions";
+import {
   getTicketByCurpAndTurn,
   updateTicket,
 } from "../services/publicTicketsApi";
@@ -60,6 +68,11 @@ function splitFullName(nombreCompleto: string): SplitNameResult {
 }
 
 export function TicketUpdatePage() {
+  const { options: levelOptions, isLoading: isLoadingLevelOptions } =
+    useCatalogOptions("niveles-educativos", LEVEL_OPTIONS);
+  const { options: subjectOptions, isLoading: isLoadingSubjectOptions } =
+    useCatalogOptions("asuntos", SUBJECT_OPTIONS);
+
   const [formValues, setFormValues] = useState<TicketUpdateFormValues>(
     INITIAL_UPDATE_VALUES,
   );
@@ -97,6 +110,11 @@ export function TicketUpdatePage() {
       return;
     }
 
+    if (!isValidCurpFormat(formValues.curp)) {
+      setErrorMessage("La CURP no tiene un formato valido.");
+      return;
+    }
+
     setIsLoadingTicket(true);
     setErrorMessage(null);
     setSuccessMessage(null);
@@ -118,10 +136,10 @@ export function TicketUpdatePage() {
         correo: ticket.correo,
         fechaAtencion: toDatetimeLocalValue(ticket.fechaAtencion),
         nivelEducativoId: findOptionValueByLabel(
-          LEVEL_OPTIONS,
+          levelOptions,
           ticket.nivelEducativo,
         ),
-        asuntoId: findOptionValueByLabel(SUBJECT_OPTIONS, ticket.asunto),
+        asuntoId: findOptionValueByLabel(subjectOptions, ticket.asunto),
       }));
 
       setSuccessMessage(
@@ -200,8 +218,9 @@ export function TicketUpdatePage() {
               required
               minLength={18}
               maxLength={18}
-              pattern="^[A-Z0-9]{18}$"
-              placeholder="ABCD001122HDFRRL09"
+              pattern={CURP_HTML_PATTERN}
+              title={CURP_FORMAT_HINT}
+              placeholder="GODE561231HDFABC09"
             />
             <FormInput
               id="update-turn"
@@ -218,7 +237,11 @@ export function TicketUpdatePage() {
               type="button"
               className="secondary-button"
               onClick={handleLoadCurrentData}
-              disabled={isLoadingTicket}
+              disabled={
+                isLoadingTicket ||
+                isLoadingLevelOptions ||
+                isLoadingSubjectOptions
+              }
             >
               {isLoadingTicket ? "Cargando..." : "Cargar datos actuales"}
             </button>
@@ -280,6 +303,8 @@ export function TicketUpdatePage() {
               value={formValues.correo}
               onChange={(value) => setField("correo", value)}
               required
+              pattern={EMAIL_HTML_PATTERN}
+              title={EMAIL_FORMAT_HINT}
               maxLength={180}
             />
             <FormInput
@@ -295,7 +320,7 @@ export function TicketUpdatePage() {
               label="Nivel educativo"
               value={formValues.nivelEducativoId}
               onChange={(value) => setField("nivelEducativoId", value)}
-              options={LEVEL_OPTIONS}
+              options={levelOptions}
               placeholder="Seleccione nivel"
               required
             />
@@ -304,7 +329,7 @@ export function TicketUpdatePage() {
               label="Asunto"
               value={formValues.asuntoId}
               onChange={(value) => setField("asuntoId", value)}
-              options={SUBJECT_OPTIONS}
+              options={subjectOptions}
               placeholder="Seleccione asunto"
               required
             />

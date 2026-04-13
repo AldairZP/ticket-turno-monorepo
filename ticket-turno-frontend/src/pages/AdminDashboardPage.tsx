@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import type { FormEvent } from "react";
+import { useEffect, useMemo, useState } from "react";
+import type { CSSProperties, FormEvent } from "react";
 import { FormInput } from "../components/FormInput";
 import { FormSelect } from "../components/FormSelect";
 import { SectionHeader } from "../components/SectionHeader";
@@ -8,13 +8,52 @@ import {
   STATUS_OPTIONS,
 } from "../constants/ticketOptions";
 import {
+  CURP_FORMAT_HINT,
+  CURP_HTML_PATTERN,
+  isValidCurpFormat,
+} from "../constants/validation";
+import { useCatalogOptions } from "../hooks/useCatalogOptions";
+import {
   getDashboardSummary,
   updateAdminTicketStatus,
 } from "../services/adminApi";
 import { extractApiErrorMessage } from "../services/httpClient";
-import type { DashboardStatusSummaryDto, TicketStatus } from "../types/api";
+import { getTicketByCurpAndTurn } from "../services/publicTicketsApi";
+import type {
+  DashboardStatusSummaryDto,
+  TicketResponseDto,
+  TicketStatus,
+} from "../types/api";
+import { formatDateTimeForUi } from "../utils/date";
+
+function clampPercent(value: number) {
+  return Math.min(Math.max(value, 0), 100);
+}
+
+function resolveTargetTicketId(ticketId: string, numeroTurno: string) {
+  if (ticketId.trim()) {
+    const parsedTicketId = Number(ticketId);
+    if (Number.isInteger(parsedTicketId) && parsedTicketId > 0) {
+      return { id: parsedTicketId, usedFallback: false };
+    }
+
+    return null;
+  }
+
+  const parsedTurnNumber = Number(numeroTurno);
+  if (Number.isInteger(parsedTurnNumber) && parsedTurnNumber > 0) {
+    return { id: parsedTurnNumber, usedFallback: true };
+  }
+
+  return null;
+}
 
 export function AdminDashboardPage() {
+  const { options: municipalityOptions } = useCatalogOptions(
+    "municipios",
+    MUNICIPALITY_OPTIONS,
+  );
+
   const [municipioId, setMunicipioId] = useState("");
   const [summary, setSummary] = useState<DashboardStatusSummaryDto | null>(
     null,
@@ -22,8 +61,16 @@ export function AdminDashboardPage() {
   const [isLoadingSummary, setIsLoadingSummary] = useState(false);
   const [summaryError, setSummaryError] = useState<string | null>(null);
 
+  const [consultCurp, setConsultCurp] = useState("");
+  const [consultTurno, setConsultTurno] = useState("");
   const [ticketId, setTicketId] = useState("");
-  const [status, setStatus] = useState<TicketStatus>("Pendiente");
+  const [status, setStatus] = useState<TicketStatus>("Resuelto");
+  const [consultedTicket, setConsultedTicket] =
+    useState<TicketResponseDto | null>(null);
+  const [consultMessage, setConsultMessage] = useState<string | null>(null);
+  const [consultError, setConsultError] = useState<string | null>(null);
+  const [isConsultingTicket, setIsConsultingTicket] = useState(false);
+
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [statusError, setStatusError] = useState<string | null>(null);
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
@@ -55,11 +102,64 @@ export function AdminDashboardPage() {
     void loadSummary(municipioId);
   };
 
+  const handleConsultTicket = async () => {
+    if (!consultCurp.trim() || !consultTurno.trim()) {
+      setConsultError(
+        "Debe ingresar CURP y numero de turno para consultar el ticket.",
+      );
+      setConsultMessage(null);
+      return;
+    }
+
+    if (!isValidCurpFormat(consultCurp)) {
+      setConsultError("La CURP no tiene un formato valido.");
+      setConsultMessage(null);
+      return;
+    }
+
+    setIsConsultingTicket(true);
+    setConsultError(null);
+    setConsultMessage(null);
+    setStatusError(null);
+    setStatusMessage(null);
+
+    try {
+      const normalizedCurp = consultCurp.trim().toUpperCase();
+      const ticket = await getTicketByCurpAndTurn(
+        normalizedCurp,
+        Number(consultTurno),
+      );
+
+      setConsultCurp(normalizedCurp);
+      setConsultedTicket(ticket);
+      setConsultMessage(
+        "Ticket consultado correctamente. Ya puede actualizar su estatus a Resuelto.",
+      );
+
+      if (ticket.estatus === "Pendiente") {
+        setStatus("Resuelto");
+      }
+    } catch (error) {
+      setConsultedTicket(null);
+      setConsultError(extractApiErrorMessage(error));
+    } finally {
+      setIsConsultingTicket(false);
+    }
+  };
+
   const handleStatusSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (!ticketId.trim()) {
-      setStatusError("Debe ingresar un ticketId para actualizar estatus.");
+    if (!consultedTicket) {
+      setStatusError("Primero consulte el ticket para validar la informacion.");
+      return;
+    }
+
+    const targetTicket = resolveTargetTicketId(ticketId, consultTurno);
+    if (!targetTicket) {
+      setStatusError(
+        "Ingrese un Ticket ID valido. Si no lo tiene, intente con el numero de turno.",
+      );
       return;
     }
 
@@ -68,14 +168,48 @@ export function AdminDashboardPage() {
     setStatusMessage(null);
 
     try {
-      const response = await updateAdminTicketStatus(Number(ticketId), status);
+      const response = await updateAdminTicketStatus(targetTicket.id, status);
       setStatusMessage(response.message);
+      setConsultedTicket((previousState) =>
+        previousState
+          ? {
+              ...previousState,
+              estatus: status,
+            }
+          : previousState,
+      );
       await loadSummary(municipioId);
     } catch (error) {
-      setStatusError(extractApiErrorMessage(error));
+      const errorMessage = extractApiErrorMessage(error);
+
+      if (targetTicket.usedFallback && !ticketId.trim()) {
+        setStatusError(
+          `${errorMessage} Si persiste, capture el Ticket ID real e intente de nuevo.`,
+        );
+      } else {
+        setStatusError(errorMessage);
+      }
     } finally {
       setIsUpdatingStatus(false);
     }
+  };
+
+  const pendingPercentage = summary
+    ? clampPercent(summary.porcentajePendientes)
+    : 0;
+
+  const municipalityRows = useMemo(
+    () =>
+      summary
+        ? [...summary.porMunicipio].sort(
+            (left, right) => right.totalSolicitudes - left.totalSolicitudes,
+          )
+        : [],
+    [summary],
+  );
+
+  const donutStyle: CSSProperties = {
+    background: `conic-gradient(#f0a228 0% ${pendingPercentage}%, #2a8f65 ${pendingPercentage}% 100%)`,
   };
 
   return (
@@ -106,7 +240,7 @@ export function AdminDashboardPage() {
                 onChange={(event) => setMunicipioId(event.target.value)}
               >
                 <option value="">Todos</option>
-                {MUNICIPALITY_OPTIONS.map((option) => (
+                {municipalityOptions.map((option) => (
                   <option key={option.value} value={option.value}>
                     {option.label}
                   </option>
@@ -143,6 +277,79 @@ export function AdminDashboardPage() {
                 <p>Resueltas</p>
                 <strong>{summary.resueltas}</strong>
                 <small>{summary.porcentajeResueltas.toFixed(2)}%</small>
+              </article>
+            </div>
+
+            <div className="dashboard-visual-grid">
+              <article className="chart-card">
+                <h4>Distribucion global</h4>
+                <div className="donut-shell">
+                  <div className="donut-ring" style={donutStyle} />
+                  <div className="donut-center">
+                    <strong>{summary.totalSolicitudes}</strong>
+                    <span>Solicitudes</span>
+                  </div>
+                </div>
+                <div className="chart-legend-row">
+                  <span>
+                    <i className="legend-dot pending" aria-hidden /> Pendiente (
+                    {summary.pendientes})
+                  </span>
+                  <span>
+                    <i className="legend-dot resolved" aria-hidden /> Resuelto (
+                    {summary.resueltas})
+                  </span>
+                </div>
+              </article>
+
+              <article className="chart-card">
+                <h4>Rendimiento por municipio</h4>
+                <div className="bar-chart">
+                  {municipalityRows.length ? (
+                    municipalityRows.map((item) => {
+                      const pendingShare = item.totalSolicitudes
+                        ? (item.pendientes / item.totalSolicitudes) * 100
+                        : 0;
+                      const resolvedShare = item.totalSolicitudes
+                        ? (item.resueltas / item.totalSolicitudes) * 100
+                        : 0;
+
+                      return (
+                        <div key={item.municipioId} className="bar-row">
+                          <div className="bar-row-top">
+                            <span>{item.municipio}</span>
+                            <strong>{item.totalSolicitudes}</strong>
+                          </div>
+                          <div
+                            className="stack-track"
+                            aria-label={`Composicion de solicitudes en ${item.municipio}`}
+                          >
+                            <span
+                              className="stack-pending"
+                              style={{
+                                width: `${clampPercent(pendingShare)}%`,
+                              }}
+                            />
+                            <span
+                              className="stack-resolved"
+                              style={{
+                                width: `${clampPercent(resolvedShare)}%`,
+                              }}
+                            />
+                          </div>
+                          <div className="bar-row-meta">
+                            <small>P: {item.pendientes}</small>
+                            <small>R: {item.resueltas}</small>
+                          </div>
+                        </div>
+                      );
+                    })
+                  ) : (
+                    <p className="muted">
+                      Sin datos por municipio para este filtro.
+                    </p>
+                  )}
+                </div>
               </article>
             </div>
 
@@ -190,35 +397,153 @@ export function AdminDashboardPage() {
           title="Actualizar estatus de ticket"
         />
 
-        <form className="inline-form" onSubmit={handleStatusSubmit}>
+        <form
+          className="inline-form status-update-form"
+          onSubmit={handleStatusSubmit}
+        >
+          <FormInput
+            id="consult-curp"
+            label="CURP"
+            value={consultCurp}
+            onChange={(value) => {
+              setConsultCurp(
+                value
+                  .toUpperCase()
+                  .replace(/[^A-Z0-9]/g, "")
+                  .slice(0, 18),
+              );
+              setConsultedTicket(null);
+              setConsultMessage(null);
+              setConsultError(null);
+              setStatusMessage(null);
+              setStatusError(null);
+            }}
+            required
+            minLength={18}
+            maxLength={18}
+            pattern={CURP_HTML_PATTERN}
+            title={CURP_FORMAT_HINT}
+          />
+          <FormInput
+            id="consult-turno"
+            label="Numero de turno"
+            type="number"
+            min="1"
+            value={consultTurno}
+            onChange={(value) => {
+              setConsultTurno(value);
+              setConsultedTicket(null);
+              setConsultMessage(null);
+              setConsultError(null);
+              setStatusMessage(null);
+              setStatusError(null);
+            }}
+            required
+          />
           <FormInput
             id="ticket-id"
-            label="Ticket ID"
+            label="Ticket ID (opcional)"
             type="number"
             min="1"
             value={ticketId}
-            onChange={setTicketId}
-            required
+            onChange={(value) => {
+              setTicketId(value);
+              setStatusMessage(null);
+              setStatusError(null);
+            }}
+            placeholder="Si el backend lo requiere"
           />
           <FormSelect
             id="ticket-status"
             label="Nuevo estatus"
             value={status}
             onChange={(value) =>
-              setStatus((value || "Pendiente") as TicketStatus)
+              setStatus((value || "Resuelto") as TicketStatus)
             }
             options={STATUS_OPTIONS}
             placeholder="Seleccione estatus"
             required
           />
           <button
+            className="secondary-button"
+            type="button"
+            onClick={() => {
+              void handleConsultTicket();
+            }}
+            disabled={isConsultingTicket || isUpdatingStatus}
+          >
+            {isConsultingTicket ? "Consultando..." : "Consultar"}
+          </button>
+          <button
             className="primary-button"
             type="submit"
-            disabled={isUpdatingStatus}
+            disabled={isUpdatingStatus || isConsultingTicket}
           >
             {isUpdatingStatus ? "Actualizando..." : "Actualizar estatus"}
           </button>
         </form>
+
+        {consultError ? (
+          <p className="feedback feedback-error">{consultError}</p>
+        ) : null}
+        {consultMessage ? (
+          <p className="feedback feedback-success">{consultMessage}</p>
+        ) : null}
+
+        {consultedTicket ? (
+          <article className="ticket-preview-card" aria-live="polite">
+            <div className="ticket-preview-header">
+              <h4>Informacion del ticket</h4>
+              <span
+                className={`ticket-status-chip ${consultedTicket.estatus === "Resuelto" ? "resolved" : "pending"}`}
+              >
+                {consultedTicket.estatus}
+              </span>
+            </div>
+            <div className="ticket-preview-grid">
+              <p>
+                <strong>Ticket ID usado:</strong>{" "}
+                {ticketId || consultTurno || "N/A"}
+              </p>
+              <p>
+                <strong>Turno:</strong> {consultedTicket.numeroTurno}
+              </p>
+              <p>
+                <strong>CURP:</strong> {consultedTicket.curp}
+              </p>
+              <p>
+                <strong>Nombre:</strong> {consultedTicket.nombreCompleto}
+              </p>
+              <p>
+                <strong>Fecha atencion:</strong>{" "}
+                {formatDateTimeForUi(consultedTicket.fechaAtencion)}
+              </p>
+              <p>
+                <strong>Municipio:</strong> {consultedTicket.municipio}
+              </p>
+              <p>
+                <strong>Nivel educativo:</strong>{" "}
+                {consultedTicket.nivelEducativo}
+              </p>
+              <p>
+                <strong>Asunto:</strong> {consultedTicket.asunto}
+              </p>
+              <p>
+                <strong>Oficina regional:</strong>{" "}
+                {consultedTicket.oficinaRegional}
+              </p>
+              <p>
+                <strong>Telefono:</strong> {consultedTicket.telefono}
+              </p>
+              <p>
+                <strong>Celular:</strong> {consultedTicket.celular}
+              </p>
+              <p>
+                <strong>Correo:</strong> {consultedTicket.correo}
+              </p>
+            </div>
+          </article>
+        ) : null}
 
         {statusError ? (
           <p className="feedback feedback-error">{statusError}</p>

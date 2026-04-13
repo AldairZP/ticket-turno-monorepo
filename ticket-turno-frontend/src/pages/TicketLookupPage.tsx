@@ -6,6 +6,7 @@ import {
   getLatestTicketByCurp,
   getTicketByCurpAndTurn,
 } from "../services/publicTicketsApi";
+import { CURP_FORMAT_HINT, CURP_HTML_PATTERN } from "../constants/validation";
 import { extractApiErrorMessage } from "../services/httpClient";
 import type { TicketResponseDto } from "../types/api";
 import { formatDateTimeForUi } from "../utils/date";
@@ -75,7 +76,8 @@ export function TicketLookupPage() {
               required
               minLength={18}
               maxLength={18}
-              pattern="^[A-Z0-9]{18}$"
+              pattern={CURP_HTML_PATTERN}
+              title={CURP_FORMAT_HINT}
             />
             <FormInput
               id="lookup-turn"
