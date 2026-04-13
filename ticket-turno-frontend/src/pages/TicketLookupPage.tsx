@@ -121,7 +121,7 @@ export function TicketLookupPage() {
               <strong>Estatus:</strong> {ticketData.estatus}
             </p>
             <p>
-              <strong>Fecha atencion:</strong>{" "}
+              <strong>Fecha atención:</strong>{" "}
               {formatDateTimeForUi(ticketData.fechaAtencion)}
             </p>
             <p>
@@ -137,7 +137,7 @@ export function TicketLookupPage() {
               <strong>Oficina regional:</strong> {ticketData.oficinaRegional}
             </p>
             <p>
-              <strong>Telefono:</strong> {ticketData.telefono}
+              <strong>Teléfono:</strong> {ticketData.telefono}
             </p>
             <p>
               <strong>Celular:</strong> {ticketData.celular}

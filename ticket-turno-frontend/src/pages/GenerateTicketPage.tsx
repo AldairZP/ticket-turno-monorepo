@@ -113,18 +113,18 @@ export function GenerateTicketPage() {
     }
 
     if (!values.fechaAtencion) {
-      messages.push("La fecha de atencion es obligatoria.");
+      messages.push("La fecha de atención es obligatoria.");
       return messages;
     }
 
     const selectedDate = new Date(values.fechaAtencion);
     if (Number.isNaN(selectedDate.getTime())) {
-      messages.push("La fecha de atencion es invalida.");
+      messages.push("La fecha de atención es invalida.");
       return messages;
     }
 
     if (selectedDate.getTime() < Date.now()) {
-      messages.push("La fecha de atencion no puede estar en el pasado.");
+      messages.push("La fecha de atención no puede estar en el pasado.");
     }
 
     if (selectedDate.getDay() === 0 || selectedDate.getDay() === 6) {
@@ -281,7 +281,7 @@ export function GenerateTicketPage() {
           <SectionHeader
             id="contact-title"
             icon="contact_mail"
-            title="Informacion de Contacto"
+            title="Information de Contacto"
           />
           <div className="grid grid-2">
             <FormInput
@@ -378,7 +378,7 @@ export function GenerateTicketPage() {
             </span>
           </button>
           <p className="legal-copy">
-            Al generar su turno, se enviaran sus datos al backend y recibira su
+            Al generar su turno, se enviaran sus datos al backend y recibirá su
             comprobante en PDF.
           </p>
           {validationMessages.length > 0 ? (

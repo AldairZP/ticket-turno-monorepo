@@ -12,7 +12,7 @@ export function PublicLayout() {
           <div className="brand-pill" aria-hidden>
             SE
           </div>
-          <h1>Sistema Generacion Turnos</h1>
+          <h1>Sistema Generación Turnos</h1>
           <div className="step-chip" aria-label="Modulo publico">
             PUB
           </div>
@@ -48,15 +48,6 @@ export function PublicLayout() {
       <main className="layout">
         <Outlet />
       </main>
-
-      <footer className="footer">
-        <p>2026 Sistema Generacion Turnos. Todos los derechos reservados.</p>
-        <nav aria-label="Enlaces legales" className="footer-links">
-          <a href="#">Aviso de privacidad</a>
-          <a href="#">Terminos de servicio</a>
-          <a href="#">Accesibilidad</a>
-        </nav>
-      </footer>
     </div>
   );
 }

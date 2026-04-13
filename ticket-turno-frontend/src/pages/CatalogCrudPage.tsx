@@ -125,7 +125,7 @@ export function CatalogCrudPage() {
 
   const handleDelete = async (itemId: number) => {
     const shouldDelete = window.confirm(
-      "Esta accion eliminara el registro. Desea continuar?",
+      "Esta acción eliminara el registro. Desea continuar?",
     );
 
     if (!shouldDelete) {
@@ -149,7 +149,7 @@ export function CatalogCrudPage() {
     <section className="panel" aria-labelledby="catalogs-title">
       <div className="intro">
         <p className="intro-step">Modulo privado</p>
-        <h2 id="catalogs-title">CRUD de Catalogos</h2>
+        <h2 id="catalogs-title">CRUD de Catálogos</h2>
         <div className="intro-rule" aria-hidden />
       </div>
 
@@ -157,7 +157,7 @@ export function CatalogCrudPage() {
         <SectionHeader
           id="catalog-selector-title"
           icon="dataset"
-          title="Seleccion de catalogo"
+          title="Selección de catalogo"
         />
 
         <div className="inline-form">
@@ -250,7 +250,7 @@ export function CatalogCrudPage() {
               className="ghost-button"
               onClick={handleCancelEdit}
             >
-              Cancelar edicion
+              Cancelar edición
             </button>
           ) : null}
         </form>

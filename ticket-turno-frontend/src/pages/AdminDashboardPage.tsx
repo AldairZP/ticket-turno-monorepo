@@ -151,7 +151,7 @@ export function AdminDashboardPage() {
     event.preventDefault();
 
     if (!consultedTicket) {
-      setStatusError("Primero consulte el ticket para validar la informacion.");
+      setStatusError("Primero consulte el ticket para validar la información.");
       return;
     }
 
@@ -322,7 +322,7 @@ export function AdminDashboardPage() {
                           </div>
                           <div
                             className="stack-track"
-                            aria-label={`Composicion de solicitudes en ${item.municipio}`}
+                            aria-label={`Composición de solicitudes en ${item.municipio}`}
                           >
                             <span
                               className="stack-pending"

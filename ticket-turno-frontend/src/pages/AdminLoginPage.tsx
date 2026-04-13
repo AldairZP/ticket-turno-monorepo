@@ -50,7 +50,7 @@ export function AdminLoginPage() {
 
     if (isLoadingCaptcha || !captchaToken.trim()) {
       setErrorMessage(
-        "Primero genera un captcha valido antes de intentar iniciar sesion.",
+        "Primero genera un captcha valido antes de intentar iniciar sesión.",
       );
       return;
     }
@@ -102,7 +102,7 @@ export function AdminLoginPage() {
             />
             <FormInput
               id="admin-password"
-              label="Contrasena"
+              label="Contraseña"
               type="password"
               value={password}
               onChange={setPassword}
@@ -119,10 +119,10 @@ export function AdminLoginPage() {
           <SectionHeader id="captcha-title" icon="verified" title="Captcha" />
           <p className="muted">
             {captchaPrompt ||
-              "No hay captcha disponible. Usa el boton para generar un nuevo reto."}
+              "No hay captcha disponible. Usa el botón para generar un nuevo reto."}
           </p>
           <p className="muted">
-            El captcha expira rapido y solo se puede usar una vez.
+            El captcha expira rápido y solo se puede usar una vez.
           </p>
           <div className="grid grid-2">
             <FormInput
@@ -133,7 +133,7 @@ export function AdminLoginPage() {
               required
               maxLength={20}
               pattern="^-?[0-9]+$"
-              title="Ingresa solo numeros como respuesta del captcha."
+              title="Ingresa solo números como respuesta del captcha."
             />
             <div className="field">
               <label className="field-label" htmlFor="captcha-token">
@@ -167,7 +167,7 @@ export function AdminLoginPage() {
             type="submit"
             disabled={isSubmitting || isLoadingCaptcha || !captchaToken.trim()}
           >
-            {isSubmitting ? "Ingresando..." : "Iniciar sesion"}
+            {isSubmitting ? "Ingresando..." : "Iniciar sesión"}
             <span className="material-symbols-outlined" aria-hidden>
               login
             </span>

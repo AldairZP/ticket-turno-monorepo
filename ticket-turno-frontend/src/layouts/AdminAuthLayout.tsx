@@ -55,10 +55,10 @@ export function AdminAuthLayout() {
             to="/admin/catalogos"
             className={({ isActive }) => getMenuLinkClass(isActive)}
           >
-            Catalogos
+            Catálogos
           </NavLink>
           <button type="button" className="menu-button" onClick={handleLogout}>
-            Cerrar sesion
+            Cerrar sesión
           </button>
         </nav>
       </header>
@@ -68,7 +68,7 @@ export function AdminAuthLayout() {
       </main>
 
       <footer className="footer">
-        <p>Acceso privado con JWT y control de sesion activo.</p>
+        <p>Acceso privado con JWT y control de sesión activo.</p>
       </footer>
     </div>
   );

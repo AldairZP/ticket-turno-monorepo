@@ -207,7 +207,7 @@ export function TicketUpdatePage() {
           <SectionHeader
             id="identity-search-title"
             icon="badge"
-            title="Identificacion de solicitud"
+            title="Identificación de solicitud"
           />
           <div className="grid grid-2">
             <FormInput
